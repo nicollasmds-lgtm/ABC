@@ -683,6 +683,45 @@
       flex-direction: column;
       gap: 8px;
     }
+
+    /* HUD compacta: reduz dimensões sem alterar animações, eventos ou feed. */
+    .header-bar { padding: 8px 14px; gap: 10px; border-radius: 13px; }
+    .brand-title { gap: 9px; }
+    .brand-logo-img { height: 30px; }
+    .brand-logo-container { padding: 3px 8px; border-radius: 8px; }
+    .brand-text h1 { font-size: 14px; }
+    .brand-text p { font-size: 9px; letter-spacing: .5px; }
+    .header-filters { gap: 8px; }
+    .category-filter-group { padding: 3px; }
+    .cat-pill { padding: 7px 9px; font-size: 10px; }
+    .state-select { padding: 8px 10px; font-size: 11px; }
+    .metrics-container { gap: 7px; }
+    .metric-pill { padding: 6px 8px; gap: 6px; border-radius: 10px; }
+    .metric-pill .metric-val { font-size: 16px; }
+    .metric-pill .metric-lbl { font-size: 8px; }
+    .event-feed-panel { width: 310px; border-radius: 13px; }
+    .feed-header { padding: 10px 13px; }
+    .feed-header h3 { font-size: 11px; }
+    .feed-list { padding: 9px; gap: 7px; }
+    .feed-card { padding: 8px 10px; border-left-width: 3px; }
+    .timeline-panel { width: min(86%, 950px); padding: 12px 20px; border-radius: 16px; }
+    .timeline-header { margin-bottom: 9px; }
+    .timeline-date-display { font-size: 19px; gap: 8px; }
+    .timeline-panel .btn { padding: 8px 11px; font-size: 11px; }
+    .timeline-slider-wrapper { margin-top: 8px; }
+    .hud-toggle { padding: 8px 11px; font-size: 11px; border-radius: 9px; }
+    @media (max-width: 1100px) {
+      .header-bar { padding: 8px 10px; }
+      .event-feed-panel { width: min(290px, 32vw); }
+      .timeline-panel { width: min(92%, 900px); padding: 10px 14px; }
+    }
+    @media (max-width: 700px) {
+      .brand-logo-img { height: 26px; }
+      .brand-text h1 { font-size: 12px; }
+      .event-feed-panel { width: auto; }
+      .timeline-panel { width: calc(100% - 20px); padding: 9px; }
+      .timeline-date-display { font-size: 15px; }
+    }
   </style>
 </head>
 <body>
