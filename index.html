@@ -463,6 +463,19 @@
       box-shadow: 0 0 10px #10b981;
       transition: all 0.3s ease;
       cursor: pointer;
+      transform-origin: center;
+    }
+
+    /* Entrada suave dos Connects quando o time lapse alcança a data de instalação */
+    .custom-marker.connect-arrive {
+      animation: connectSmoothAppear 850ms cubic-bezier(.22,.8,.25,1) both;
+    }
+
+    @keyframes connectSmoothAppear {
+      0%   { opacity: 0; transform: scale(.15); filter: blur(3px); box-shadow: 0 0 0 rgba(16,185,129,0); }
+      55%  { opacity: .85; transform: scale(1.18); filter: blur(0); }
+      78%  { opacity: 1; transform: scale(.94); box-shadow: 0 0 18px rgba(16,185,129,.9); }
+      100% { opacity: 1; transform: scale(1); filter: blur(0); box-shadow: 0 0 10px #10b981; }
     }
 
     .custom-marker.has-thunder {
@@ -722,6 +735,44 @@
       .timeline-panel { width: calc(100% - 20px); padding: 9px; }
       .timeline-date-display { font-size: 15px; }
     }
+
+    /* Janela do indicador: independente das animações e do feed de descargas. */
+    .stats-modal { display:none; position:fixed; inset:0; z-index:12000; background:rgba(2,6,23,.72); backdrop-filter:blur(5px); align-items:center; justify-content:center; padding:18px; }
+    .stats-modal.open { display:flex; }
+    .stats-card { position:relative; width:min(620px, 96vw); max-height:90vh; overflow:auto; padding:26px; color:#e2e8f0; background:linear-gradient(145deg,#111c30,#0b1424); border:1px solid rgba(56,189,248,.35); border-radius:20px; box-shadow:0 24px 80px rgba(0,0,0,.55); }
+    .stats-close { position:absolute; top:14px; right:14px; width:34px; height:34px; border:1px solid #334155; border-radius:9px; color:#cbd5e1; background:#1e293b; cursor:pointer; }
+    .stats-eyebrow { color:#38bdf8; font-size:10px; letter-spacing:1.5px; font-weight:800; margin-bottom:9px; }
+    .stats-card h2 { margin:0 36px 8px 0; font-size:clamp(18px,3vw,24px); line-height:1.25; }
+    .stats-subtitle { color:#94a3b8; font-size:12px; line-height:1.6; margin:0 0 20px; }
+    .stats-kpis { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    .stats-kpi { min-width:0; padding:13px; background:rgba(30,41,59,.75); border:1px solid #29384e; border-radius:12px; }
+    .stats-kpi span { display:block; color:#94a3b8; font-size:10px; line-height:1.4; min-height:28px; }
+    .stats-kpi strong { display:block; margin-top:7px; font-size:clamp(20px,4vw,28px); color:#f8fafc; font-weight:800; }
+    .stats-kpi-highlight { border-color:rgba(56,189,248,.45); background:rgba(14,116,144,.17); }
+    .stats-kpi-highlight strong { color:#38bdf8; }
+    .stats-chart { margin-top:24px; display:grid; gap:18px; }
+    .stats-bar-label { display:flex; justify-content:space-between; gap:12px; margin-bottom:8px; color:#cbd5e1; font-size:12px; }
+    .stats-bar-label b { color:#f8fafc; font-variant-numeric:tabular-nums; }
+    .stats-track { height:14px; border-radius:99px; background:#263449; overflow:hidden; }
+    .stats-bar { height:100%; width:0; border-radius:99px; transition:width .45s ease; }
+    .stats-bar-cyan { background:linear-gradient(90deg,#0891b2,#38bdf8); box-shadow:0 0 18px rgba(56,189,248,.28); }
+    .stats-bar-muted { background:linear-gradient(90deg,#475569,#64748b); }
+    .stats-note { margin:22px 0 0; padding-top:14px; border-top:1px solid #263449; color:#94a3b8; font-size:10px; line-height:1.6; }
+    .stats-note i { color:#38bdf8; margin-right:5px; }
+    .stats-pie-section { margin-top:24px; padding-top:18px; border-top:1px solid #263449; }
+    .stats-pie-section h3 { margin:0 0 16px; font-size:14px; color:#e2e8f0; }
+    .stats-pie-layout { display:flex; align-items:center; justify-content:center; gap:26px; flex-wrap:wrap; }
+    .stats-pie { width:176px; height:176px; border-radius:50%; display:grid; place-items:center; background:conic-gradient(#22d3ee 0% 0%, #475569 0% 100%); box-shadow:0 0 28px rgba(34,211,238,.10); }
+    .stats-pie-hole { width:112px; height:112px; border-radius:50%; background:#101b2d; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .stats-pie-hole strong { color:#f8fafc; font-size:24px; }
+    .stats-pie-hole span { color:#94a3b8; font-size:10px; }
+    .stats-legend { min-width:220px; display:grid; gap:13px; }
+    .stats-legend > div { display:grid; grid-template-columns:12px 1fr auto; gap:9px; align-items:center; font-size:11px; color:#cbd5e1; }
+    .stats-legend b { color:#f8fafc; font-variant-numeric:tabular-nums; }
+    .stats-dot { width:10px; height:10px; border-radius:50%; display:block; }
+    .stats-dot-cyan { background:#22d3ee; } .stats-dot-muted { background:#475569; }
+    .hud-hidden .map-controls-floating { display:none !important; }
+    @media(max-width:520px) { .stats-card { padding:20px 15px; } .stats-kpis { grid-template-columns:1fr; } .stats-kpi { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 12px; } .stats-kpi span { min-height:0; } .stats-kpi strong { margin-top:0; font-size:21px; } }
   </style>
 </head>
 <body>
@@ -798,6 +849,7 @@
     <button class="btn" onclick="setTileLayer('dark')"><i class="fa-solid fa-moon"></i> Tema Escuro</button>
     <button class="btn" onclick="setTileLayer('osm')"><i class="fa-solid fa-map"></i> Mapa Aberto (OSM)</button>
     <button class="btn" onclick="setTileLayer('sat')"><i class="fa-solid fa-satellite"></i> Satélite HD</button>
+    <button class="btn" id="btnStatsPrevectron" onclick="abrirGraficoPrevectron()"><i class="fa-solid fa-chart-column"></i> Descargas x Connects</button>
   </div>
 
   <!-- Event Notification Alert Toast -->
@@ -814,6 +866,33 @@
     </div>
     <div class="feed-list" id="feedList">
       <!-- Inserido dinamicamente -->
+    </div>
+  </div>
+
+  <!-- Gráfico de descargas por Prevectron instalado -->
+  <div id="prevectronChartModal" class="stats-modal" role="dialog" aria-modal="true" aria-labelledby="statsTitle" aria-hidden="true">
+    <div class="stats-card">
+      <button class="stats-close" onclick="fecharGraficoPrevectron()" aria-label="Fechar gráfico"><i class="fa-solid fa-xmark"></i></button>
+      <div class="stats-eyebrow"><i class="fa-solid fa-bolt"></i> INDICADOR DE CAPTURA</div>
+      <h2 id="statsTitle">Descargas elétricas x dispositivos instalados</h2>
+      <p class="stats-subtitle">Percentual de dispositivos Connect instalados com ao menos uma descarga registrada. Total de descargas considerado: 15.</p>
+      <div class="stats-kpis">
+        <div class="stats-kpi"><span>Connects instalados</span><strong id="statsInstalled">—</strong></div>
+        <div class="stats-kpi"><span>Total de descargas</span><strong id="statsTotalDischarges">15</strong></div>
+        <div class="stats-kpi stats-kpi-highlight"><span>Percentual com registro</span><strong id="statsPercent">—</strong></div>
+      </div>
+      <div class="stats-chart" aria-label="Comparativo de dispositivos instalados e com descargas">
+        <div class="stats-bar-row"><div class="stats-bar-label"><span>Descargas registradas</span><b id="statsCapturedLabel">0</b></div><div class="stats-track"><div id="statsCapturedBar" class="stats-bar stats-bar-cyan"></div></div></div>
+        <div class="stats-bar-row"><div class="stats-bar-label"><span>Sem descarga registrada</span><b id="statsNoCaptureLabel">0</b></div><div class="stats-track"><div id="statsNoCaptureBar" class="stats-bar stats-bar-muted"></div></div></div>
+      </div>
+      <div class="stats-pie-section">
+        <h3>Distribuição dos dispositivos</h3>
+        <div class="stats-pie-layout">
+          <div id="statsPie" class="stats-pie" role="img" aria-label="Gráfico de pizza: Connects com e sem registro de descarga"><div class="stats-pie-hole"><strong id="statsPiePercent">0%</strong><span>com registro</span></div></div>
+          <div class="stats-legend"><div><span class="stats-dot stats-dot-cyan"></span><span>Connects com registro</span><b id="statsPieCaptured">0</b></div><div><span class="stats-dot stats-dot-muted"></span><span>Sem descarga registrada</span><b id="statsPieNoCapture">0</b></div></div>
+        </div>
+      </div>
+      <p class="stats-note"><i class="fa-solid fa-circle-info"></i> Indicador calculado com os registros disponíveis no arquivo; considera dispositivos com pelo menos uma descarga registrada, não a eficiência técnica individual de captura.</p>
     </div>
   </div>
 
@@ -1120,6 +1199,15 @@
           if (!item.adicionado) {
             item.marker.addTo(map);
             item.adicionado = true;
+            // Reinicia a animação sempre que o cursor do time lapse cruza a data de instalação.
+            requestAnimationFrame(() => {
+              const markerElem = item.marker.getElement()?.querySelector('.custom-marker');
+              if (markerElem) {
+                markerElem.classList.remove('connect-arrive');
+                void markerElem.offsetWidth;
+                markerElem.classList.add('connect-arrive');
+              }
+            });
           }
         } else {
           if (item.adicionado) {
@@ -1195,33 +1283,36 @@
     function executarAnimacaoRaio(descarga, darZoom = false) {
       const toast = document.getElementById('toastAlert');
       const msg = document.getElementById('toastMsg');
-      msg.textContent = `⚡ Descarga em ${descarga.cidade} (${descarga.data_formatada}): +${descarga.novos_raios} Raio(s)!`;
+      const quantidade = Math.max(1, Math.min(15, Number(descarga.novos_raios || 1)));
+      msg.textContent = `⚡ Descarga em ${descarga.cidade} (${descarga.data_formatada}): +${quantidade} raio(s)!`;
       toast.classList.add('visible');
       setTimeout(() => toast.classList.remove('visible'), 4000);
 
-      const strikeDiv = document.createElement('div');
-      strikeDiv.className = 'lightning-strike-container';
-      strikeDiv.innerHTML = `
-        <img src="${BOLT_IMG_SRC}" class="lightning-bolt-img" alt="Raio">
-        <div class="lightning-impact-ring"></div>
-      `;
+      const desenharRaio = (indice) => {
+        const strikeDiv = document.createElement('div');
+        strikeDiv.className = 'lightning-strike-container';
+        strikeDiv.innerHTML = `
+          <img src="${BOLT_IMG_SRC}" class="lightning-bolt-img" alt="Raio">
+          <div class="lightning-impact-ring"></div>
+        `;
+        const boltIcon = L.divIcon({
+          className: 'bolt-div-icon',
+          html: strikeDiv,
+          iconSize: [85, 175],
+          iconAnchor: [60, 170]
+        });
+        const boltMarker = L.marker([descarga.lat, descarga.lon], {
+          icon: boltIcon,
+          zIndexOffset: 3000 + indice
+        }).addTo(map);
+        setTimeout(() => map.removeLayer(boltMarker), 1150);
+      };
 
-      const boltIcon = L.divIcon({
-        className: 'bolt-div-icon',
-        html: strikeDiv,
-        iconSize: [85, 175],
-        iconAnchor: [60, 170]
-      });
-
-      const boltMarker = L.marker([descarga.lat, descarga.lon], {
-        icon: boltIcon,
-        zIndexOffset: 3000
-      }).addTo(map);
-
-      setTimeout(() => {
-        map.removeLayer(boltMarker);
-      }, 1150);
-
+      // Cada raio contabilizado recebe uma animação própria, em sequência,
+      // mesmo quando vários raios pertencem ao mesmo Connect/ocorrência.
+      for (let i = 0; i < quantidade; i++) {
+        setTimeout(() => desenharRaio(i), i * 280);
+      }
       if (darZoom) {
         map.flyTo([descarga.lat, descarga.lon], 12, { duration: 1.2 });
       }
@@ -1319,6 +1410,104 @@
       // Recalcula o mapa para ocupar corretamente a área disponível.
       setTimeout(() => map.invalidateSize(), 80);
     }
+
+    function abrirGraficoPrevectron() {
+      // O gráfico considera somente Connects; as 15 descargas são ocorrências,
+      // não 15 dispositivos distintos.
+      const connects = (DATA.equipamentos || []).filter(eq =>
+        String(eq.tipo_categoria || '').toLowerCase() === 'connect'
+      );
+      const instalados = connects.length;
+      const eventosConnect = (descargas || []).filter(d =>
+        connects.some(eq => String(eq.serial || '') === String(d.serial || ''))
+      );
+      const totalDescargas = eventosConnect.reduce((s, d) => s + Math.max(0, Number(d.novos_raios || 0)), 0);
+      const seriaisComDescarga = new Set(eventosConnect.map(d => String(d.serial || '')).filter(Boolean));
+      const connectsComRegistro = connects.filter(eq => seriaisComDescarga.has(String(eq.serial || ''))).length;
+      const semRegistro = Math.max(0, instalados - connectsComRegistro);
+      const percentual = instalados ? (totalDescargas / instalados) * 100 : 0;
+      const pct = percentual.toLocaleString('pt-BR', { maximumFractionDigits: 1 });
+      document.getElementById('statsTotalDischarges').textContent = totalDescargas.toLocaleString('pt-BR');
+      document.getElementById('statsInstalled').textContent = instalados.toLocaleString('pt-BR');
+      document.getElementById('statsPercent').textContent = pct + '%';
+      document.getElementById('statsCapturedLabel').textContent = totalDescargas.toLocaleString('pt-BR');
+      document.getElementById('statsNoCaptureLabel').textContent = semRegistro.toLocaleString('pt-BR');
+      document.getElementById('statsCapturedBar').style.width = Math.min(100, percentual) + '%';
+      document.getElementById('statsNoCaptureBar').style.width = (instalados ? semRegistro / instalados * 100 : 0) + '%';
+      document.getElementById('statsPie').style.background = `conic-gradient(#22d3ee 0% ${instalados ? connectsComRegistro / instalados * 100 : 0}%, #475569 ${instalados ? connectsComRegistro / instalados * 100 : 0}% 100%)`;
+      document.getElementById('statsPiePercent').textContent = (instalados ? (connectsComRegistro / instalados * 100) : 0).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + '%';
+      document.getElementById('statsPieCaptured').textContent = connectsComRegistro.toLocaleString('pt-BR');
+      document.getElementById('statsPieNoCapture').textContent = semRegistro.toLocaleString('pt-BR');
+      const modal = document.getElementById('prevectronChartModal');
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+
+    // Mapa de calor agregado por cidade/região, sumando os raios registrados
+    // em cada ocorrência. Assim, múltiplas descargas no mesmo Connect contam.
+    let camadaMapaCalor = null;
+    let mapaCalorAtivo = false;
+    function alternarMapaCalor() {
+      const botao = document.getElementById('btnHeatmap');
+      if (mapaCalorAtivo && camadaMapaCalor) {
+        map.removeLayer(camadaMapaCalor);
+        camadaMapaCalor = null;
+        mapaCalorAtivo = false;
+        botao.innerHTML = '<i class="fa-solid fa-fire"></i> Mapa de calor de raios';
+        botao.classList.remove('active');
+        return;
+      }
+      const pontos = (descargas || []).filter(d => Number.isFinite(Number(d.lat)) && Number.isFinite(Number(d.lon)));
+      if (!pontos.length) {
+        alert('Não há coordenadas de descargas disponíveis para montar o mapa de calor.');
+        return;
+      }
+      const grupos = new Map();
+      pontos.forEach(d => {
+        const cidade = String(d.cidade || 'Cidade não identificada').trim();
+        const estado = String(d.estado || '').trim();
+        const chave = cidade.toLocaleLowerCase('pt-BR') + '|' + estado.toLocaleLowerCase('pt-BR');
+        const quantidade = Math.max(0, Number(d.novos_raios || 0));
+        if (!grupos.has(chave)) grupos.set(chave, { cidade, estado, latSum: 0, lonSum: 0, coords: 0, count: 0, eventos: 0 });
+        const g = grupos.get(chave);
+        g.latSum += Number(d.lat);
+        g.lonSum += Number(d.lon);
+        g.coords++;
+        g.count += quantidade;
+        g.eventos++;
+      });
+      const maior = Math.max(1, ...Array.from(grupos.values()).map(g => g.count));
+      camadaMapaCalor = L.layerGroup();
+      grupos.forEach(g => {
+        const lat = g.latSum / g.coords;
+        const lon = g.lonSum / g.coords;
+        const intensidade = Math.min(g.count / maior, 1);
+        const cor = intensidade > .65 ? '#ef4444' : intensidade > .3 ? '#f97316' : '#facc15';
+        L.circle([lat, lon], {
+          radius: 10000 + intensidade * 45000,
+          color: cor, weight: 2, opacity: .9,
+          fillColor: cor, fillOpacity: .22 + intensitySafe(intensidade) * .3
+        }).bindTooltip(`<b>${g.cidade}${g.estado ? ', ' + g.estado : ''}</b><br>${g.count} descarga(s) registrada(s)<br>${g.eventos} registro(s) de ocorrência`, {sticky:true})
+          .addTo(camadaMapaCalor);
+      });
+      camadaMapaCalor.addTo(map);
+      mapaCalorAtivo = true;
+      botao.innerHTML = '<i class="fa-solid fa-fire-flame-curved"></i> Ocultar mapa de calor';
+      botao.classList.add('active');
+    }
+    function intensitySafe(value) { return Math.max(0, Math.min(1, value)); }
+
+    function fecharGraficoPrevectron() {
+      const modal = document.getElementById('prevectronChartModal');
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+    document.getElementById('prevectronChartModal').addEventListener('click', function(event) {
+      if (event.target === this) fecharGraficoPrevectron();
+    });
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') fecharGraficoPrevectron();
+    });
 
     // Inicialização
     atualizarSeletorEstados();
